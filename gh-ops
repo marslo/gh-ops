@@ -11,7 +11,7 @@
 set -euo pipefail
 
 declare -r HERE="$( dirname "$( readlink -f "${BASH_SOURCE[0]:-$0}" )" )"
-[[ '--setup'    = "${1:-}" ]] && { bash -x "${HERE}/setup.sh"; exit $?; }
+[[ '--setup' = "${1:-}" ]] && { shift; bash "${HERE}/setup.sh" "$@"; exit $?; }
 
 # @credit: https://github.com/ppo/bash-colors
 # @usage:  or copy & paste the `c()` function from:
@@ -36,7 +36,7 @@ USAGE
 OPTIONS
   $(c G)--setup$(c)                   setup the gh-ops script environment (e.g. feth submodules, set bash_completion, ...)
 
-  $(c G)-c$(c), $(c G)--checkout$(c)            checkout the selected pull request ( $(c Cis)*default$(c) )
+  $(c G)-c$(c), $(c G)--checkout$(c)            checkout the selected pull request
   $(c G)-C$(c), $(c G)--close$(c)               close the selected pull request
   $(c G)-o$(c), $(c G)--open$(c)                open the selected pull request in the web browser
   $(c G)-A$(c), $(c G)--auto-open$(c)           automatically open the PR in the web browser after selection

@@ -101,19 +101,15 @@ function __gh_ops_complete() {
 }
 
 # wrap the original __start_gh function
-if declare -f __start_gh &>/dev/null; then
-  __orig_start_gh=$(declare -f __start_gh)
-  eval "${__orig_start_gh//__start_gh/__start_gh_orig}"
+__orig_start_gh=$(declare -f __start_gh)
+eval "${__orig_start_gh//__start_gh/__start_gh_orig}"
 
-  function __start_gh() {
-    if [[ "${COMP_WORDS[1]}" == "ops" && ${COMP_CWORD} -ge 2 ]]; then
-      __gh_ops_complete
-      return
-    fi
-    __start_gh_orig "$@"
-  }
-else
-  echo "WARN: gh completion not loaded, gh ops <tab> will not work" >&2
-fi
+function __start_gh() {
+  if [[ "${COMP_WORDS[1]}" == "ops" && ${COMP_CWORD} -ge 2 ]]; then
+    __gh_ops_complete
+    return
+  fi
+  __start_gh_orig "$@"
+}
 
 # vim:tabstop=2:softtabstop=2:shiftwidth=2:expandtab:filetype=sh:
