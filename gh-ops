@@ -10,8 +10,8 @@
 
 set -euo pipefail
 
-declare -r ME="$( basename "${BASH_SOURCE[0]:-$0}" | sed 's/-/ /' )"
 declare -r HERE="$( dirname "$( readlink -f "${BASH_SOURCE[0]:-$0}" )" )"
+[[ '--setup'    = "${1:-}" ]] && { bash -x "${HERE}/setup.sh"; exit $?; }
 
 # @credit: https://github.com/ppo/bash-colors
 # @usage:  or copy & paste the `c()` function from:
@@ -21,11 +21,12 @@ declare -f c &>/dev/null || {
   test -f "${HERE}/utils/bash-colors.sh" && source "${HERE}/utils/bash-colors.sh" || { c() { :; }; };
 }
 # shellcheck disable=SC2015
-[[ -f "${HERE}/libs/gh-previews" ]] && source "${HERE}/libs/gh-preview" || {
+[[ -f "${HERE}/libs/gh-preview" ]] && source "${HERE}/libs/gh-preview" || {
   echo -e "$(c 0Rs)ERROR: missing dependency: $(c 0Wi)download $(c 0Mi)\`gh-preview\`$(c 0Wi) from https://github.com/marslo/gh-utility$(c)" >&2
   exit 1
 }
 
+declare -r ME="$( basename "${BASH_SOURCE[0]:-$0}" | sed 's/-/ /' )"
 declare -r USAGE="NAME
   $(c Cs)${ME}$(c) - interactively GitHub PR using fzf
 
@@ -33,6 +34,8 @@ USAGE
   $(c Ys)\$ ${ME}$(c) $(c Wd)[$(c)$(c Gs)OPTIONS$(c)$(c Wd)]$(c)
 
 OPTIONS
+  $(c G)--setup$(c)                   setup the gh-ops script environment (e.g. feth submodules, set bash_completion, ...)
+
   $(c G)-c$(c), $(c G)--checkout$(c)            checkout the selected pull request ( $(c Cis)*default$(c) )
   $(c G)-C$(c), $(c G)--close$(c)               close the selected pull request
   $(c G)-o$(c), $(c G)--open$(c)                open the selected pull request in the web browser
@@ -41,12 +44,15 @@ OPTIONS
   $(c G)-r$(c), $(c G)--rebase$(c)              rebase merge the selected pull request and delete
   $(c G)-l$(c), $(c G)--add-label$(c) $(c 0Mi)LABEL$(c)     add label(s) to the selected pull request $(c 0i)(default:  using fzf to select)$(c)
   $(c G)-L$(c), $(c G)--remove-label$(c) $(c 0Mi)LABEL$(c)  remove label(s) from the selected pull request $(c 0i)(default:  using fzf to select)$(c)
+
   $(c G)-M$(c), $(c G)--comment$(c) $(c 0Mi)MESSAGE$(c)     add a review comment to the selected pull request with message
   $(c G)-a$(c), $(c G)--approve$(c) $(c 0Mi)<MESSAGE>$(c)   approve the selected pull request with or without message
   $(c G)--request-changes$(c) $(c 0Mi)MESSAGE$(c) request changes on the selected pull request with message
+
   $(c G)-S$(c), $(c G)--state$(c) $(c 0Mi)STATE$(c)         filter PR by state $(c 0i)(e.g. $(c 0Ci)open$(c 0i), $(c 0Ci)closed$(c 0i), $(c 0Ci)all$(c 0i), $(c 0Ci)merged$(c 0i))$(c)
   $(c G)-B$(c), $(c G)--base$(c) $(c 0Mi)BRANCH_NAME$(c)    filter PR by base branch
   $(c G)-R$(c), $(c G)--repo$(c) $(c 0Mi)OWNER/REPO$(c)     filter PR by repository $(c 0i)(e.g. $(c 0Ci)OWNER/REPO$(c 0i))$(c)
+
   $(c G)-v$(c), $(c G)--verbose$(c)             show verbose output
   $(c G)--dryrun$(c)                  show the command to be executed, but do not run it
   $(c G)-h$(c), $(c G)--help$(c)                show this help message
