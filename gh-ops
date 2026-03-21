@@ -12,18 +12,17 @@ set -euo pipefail
 
 declare -r ME="$( basename "${BASH_SOURCE[0]:-$0}" | sed 's/-/ /' )"
 declare -r HERE="$( dirname "$( readlink -f "${BASH_SOURCE[0]:-$0}" )" )"
-declare -r GH_D_ROOT="${HERE%/*/*}"
 
 # @credit: https://github.com/ppo/bash-colors
 # @usage:  or copy & paste the `c()` function from:
 #          https://github.com/ppo/bash-colors/blob/master/bash-colors.sh#L3
 # shellcheck disable=SC2015
 declare -f c &>/dev/null || {
-  test -f "${GH_D_ROOT}/bash-colors.sh" && source "${GH_D_ROOT}/bash-colors.sh" || { c() { :; }; };
+  test -f "${HERE}/utils/bash-colors.sh" && source "${HERE}/utils/bash-colors.sh" || { c() { :; }; };
 }
 # shellcheck disable=SC2015
-[[ -f "${GH_D_ROOT}/gh-preview" ]] && source "${GH_D_ROOT}/gh-preview" || {
-  echo -e "$(c 0Rs)ERROR: missing dependency: $(c 0Mi)\`gh-preview\` $(c 0Wi)script not found. please make sure it is present in the same directory or in the PATH$(c)" >&2
+[[ -f "${HERE}/libs/gh-previews" ]] && source "${HERE}/libs/gh-preview" || {
+  echo -e "$(c 0Rs)ERROR: missing dependency: $(c 0Wi)download $(c 0Mi)\`gh-preview\`$(c 0Wi) from https://github.com/marslo/gh-utility$(c)" >&2
   exit 1
 }
 

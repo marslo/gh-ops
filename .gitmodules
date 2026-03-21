@@ -1,0 +1,8 @@
+[submodule "libs"]
+	path = libs
+	url = ../gh-utility
+	branch = main
+[submodule "utils"]
+	path = utils
+	url = ../../ppo/bash-colors
+	branch = master
