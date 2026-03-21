@@ -15,18 +15,21 @@ done
 
 # init submodules if any
 info "initializing git submodules if any:"
-if git -C "${_HERE}" --no-pager config \
-       --file "$(git -C "${_HERE}" rev-parse --show-toplevel)"/.gitmodules \
+pushd . > /dev/null && cd "${_HERE}"
+if git --no-pager config \
+       --file "$(git rev-parse --show-toplevel)"/.gitmodules \
        --get-regexp url; then
   git submodule foreach --recursive git clean -dffx;
   git submodule foreach --recursive git reset --hard;
   git submodule update -f --init --recursive;
 fi
+popd > /dev/null
+
 
 # install bash completion
-declare COMP_SRC="${_HERE}/etc/gh-ops.sh"
+declare COMP_SRC="${_HERE}/etc/gh-arsenal-completion.sh"
 declare COMP_DIR="${BASH_COMPLETION_USER_DIR:-${HOME}/.local/share/bash-completion}"
-declare COMP_DST="${COMP_DIR}/gh-ops.sh"
+declare COMP_DST="${COMP_DIR}/gh-arsenal-completion.sh"
 test -d "${COMP_DIR}" || mkdir -p "${COMP_DIR}"
 ${FORCE:=false} && test -L "${COMP_DST}" && unlink "${COMP_DST}"
 test -L "${COMP_DST}" || {

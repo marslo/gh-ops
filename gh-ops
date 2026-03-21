@@ -21,7 +21,7 @@ declare -f c &>/dev/null || {
   test -f "${HERE}/utils/bash-colors.sh" && source "${HERE}/utils/bash-colors.sh" || { c() { :; }; };
 }
 # shellcheck disable=SC2015
-[[ -f "${HERE}/libs/gh-preview" ]] && source "${HERE}/libs/gh-preview" || {
+[[ -f "${HERE}/etc/gh-preview" ]] && source "${HERE}/etc/gh-preview" || {
   echo -e "$(c 0Rs)ERROR: missing dependency: $(c 0Wi)download $(c 0Mi)\`gh-preview\`$(c 0Wi) from https://github.com/marslo/gh-utility$(c)" >&2
   exit 1
 }
