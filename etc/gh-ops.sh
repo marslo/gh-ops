@@ -82,15 +82,16 @@ complete -F _gh_ops gh-ops
 #=============================================================================#
 function __gh_ops_complete() { __gh_ops_completion; }
 
-# wrap the original __start_gh function
-__orig_start_gh=$(declare -f __start_gh)
-eval "${__orig_start_gh//__start_gh/__start_gh_orig}"
+if ! declare -f __start_gh_orig &>/dev/null; then
+  __orig_start_gh=$(declare -f __start_gh)
+  eval "${__orig_start_gh//__start_gh/__start_gh_orig}"
+fi
 
 function __start_gh() {
-  if [[ "${COMP_WORDS[1]}" == "ops" && ${COMP_CWORD} -ge 2 ]]; then
-    __gh_ops_complete
-    return
-  fi
+  case "${COMP_WORDS[1]}" in
+    ops ) [[ ${COMP_CWORD} -ge 2 ]] && declare -f __gh_ops_do_complete &>/dev/null && { __gh_ops_do_complete; return; } ;;
+    new ) [[ ${COMP_CWORD} -ge 2 ]] && declare -f __gh_new_do_complete &>/dev/null && { __gh_new_do_complete; return; } ;;
+  esac
   __start_gh_orig "$@"
 }
 
