@@ -4,7 +4,7 @@
 #     FileName : gh-ops
 #       Author : marslo
 #      Created : 2026-01-21 20:38:07
-#   LastChange : 2026-03-20 16:24:09
+#   LastChange : 2026-05-07 02:54:23
 #  Inspired by : https://seb.jambor.dev/posts/improving-shell-workflows-with-fzf/
 #=============================================================================
 
@@ -35,6 +35,7 @@ USAGE
 
 OPTIONS
   $(c G)--setup$(c)                   setup the gh-ops script environment (e.g. feth submodules, set bash_completion, ...)
+  $(c G)--force$(c)                   force to re-install the bash completion, only for $(c 0Gi)--setup$(c) option
 
   $(c G)-c$(c), $(c G)--checkout$(c)            checkout the selected pull request
   $(c G)-C$(c), $(c G)--close$(c)               close the selected pull request
