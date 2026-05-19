@@ -4,6 +4,14 @@ A GitHub CLI extension for interactively managing Pull Requests via fzf.
 
 ---
 
+[![pre-commit](https://img.shields.io/github/actions/workflow/status/marslo/gh-ops/pre-commit.yml?logo=githubactions&logoColor=white&label=pre-commit)](https://github.com/marslo/gh-ops/actions/workflows/pre-commit.yml)
+![gh extension](https://img.shields.io/badge/gh%20extension-install-ffd700?logo=github&logoColor=white)
+![fzf](https://img.shields.io/badge/CLI-fzf-76d8d2?logo=gnubash&logoColor=white)
+![Bash](https://img.shields.io/badge/Language-bash%20%2F%20jq-c7f484?logo=gnubash&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow?logo=opensourceinitiative&logoColor=white)
+
+---
+
 # features
 
 - **Interactive PR selection** powered by fzf with rich preview
