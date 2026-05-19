@@ -4,7 +4,7 @@
 #     FileName : gh-ops
 #       Author : marslo
 #      Created : 2026-01-21 20:38:07
-#   LastChange : 2026-05-07 02:54:23
+#   LastChange : 2026-05-18 22:14:36
 #  Inspired by : https://seb.jambor.dev/posts/improving-shell-workflows-with-fzf/
 #=============================================================================
 
@@ -18,7 +18,7 @@ declare -r HERE="$( dirname "$( readlink -f "${BASH_SOURCE[0]:-$0}" )" )"
 #          https://github.com/ppo/bash-colors/blob/master/bash-colors.sh#L3
 # shellcheck disable=SC2015
 declare -f c &>/dev/null || {
-  test -f "${HERE}/utils/bash-colors.sh" && source "${HERE}/utils/bash-colors.sh" || { c() { :; }; };
+  source "${HERE}/utils/bash-colors.sh" || { c() { :; }; };
 }
 # shellcheck disable=SC2015
 [[ -f "${HERE}/etc/gh-preview" ]] && source "${HERE}/etc/gh-preview" || {
@@ -50,6 +50,8 @@ OPTIONS
   $(c G)-a$(c), $(c G)--approve$(c) $(c 0Mi)<MESSAGE>$(c)   approve the selected pull request with or without message
   $(c G)--request-changes$(c) $(c 0Mi)MESSAGE$(c) request changes on the selected pull request with message
 
+  $(c G)--issue$(c) $(c 0Mi)<STATE>$(c)           interactively list and select issues $(c 0i)(default: $(c 0Ci)open$(c 0i), or $(c 0Ci)closed$(c 0i))$(c)
+
   $(c G)-S$(c), $(c G)--state$(c) $(c 0Mi)STATE$(c)         filter PR by state $(c 0i)(e.g. $(c 0Ci)open$(c 0i), $(c 0Ci)closed$(c 0i), $(c 0Ci)all$(c 0i), $(c 0Ci)merged$(c 0i))$(c)
   $(c G)-B$(c), $(c G)--base$(c) $(c 0Mi)BRANCH_NAME$(c)    filter PR by base branch
   $(c G)-R$(c), $(c G)--repo$(c) $(c 0Mi)OWNER/REPO$(c)     filter PR by repository $(c 0i)(e.g. $(c 0Ci)OWNER/REPO$(c 0i))$(c)
@@ -80,17 +82,23 @@ EXAMPLES
   $(c Wdi)# comment on the PR - to trigger the Jenkins pipeline with keyword$(c)
   $(c Ys)\$ ${ME} $(c 0Gi)--comment $(c 0Mi)'cri'$(c)
 
+  $(c Wdi)# interactively select issues$(c)
+  $(c Ys)\$ ${ME} $(c 0Gi)--issue$(c)
+  $(c Ys)\$ ${ME} $(c 0Gi)--issue $(c 0Mi)open$(c)
+  $(c Ys)\$ ${ME} $(c 0Gi)--issue $(c 0Mi)closed$(c)
+
 TIPS
   while in the fzf selection menu:
     • press $(c 0Bsi)ctrl-y$(c) to copy the PR ID to clipboard
     • press $(c 0Bsi)ctrl-o$(c) to open the selected PR in the web browser
-    • press $(c 0Bsi)ctrl-/$(c) to toggle between local and remote preview (requires the preview script to be present)
+    • press $(c 0Bsi)ctrl-\\$(c) to toggle between local and remote preview (requires the preview script to be present)
 "
 
 declare DRYRUN=false
 declare VERBOSE=false
 declare OPEN=false
 declare AUTO=false
+declare ISSUE_MODE=''
 declare -a CLI_CMD=( gh pr )
 declare -a CLI_OPTS=()
 declare -a GH_OPTS=()
@@ -226,6 +234,10 @@ function main() {
       -A | --auto-open    ) OPEN=true; AUTO=true                 ; shift ;;
       --draft             ) OPTIONS+=( draft )                   ; shift ;;
       --ready             ) OPTIONS+=( ready )                   ; shift ;;
+      --issue              ) ISSUE_MODE='open'
+                            if [[ -n "${2:-}" && "${2}" != -* ]]; then
+                              ISSUE_MODE="${2}"; shift
+                            fi                                   ; shift ;;
       -v | --verbose      ) VERBOSE=true                         ; shift ;;
       --dryrun            ) DRYRUN=true                          ; shift ;;
       --request-changes | \
@@ -251,6 +263,21 @@ function main() {
   # uniq (guard against empty array producing a blank line that mapfile would capture)
   [[ ${#OPTIONS[@]} -gt 0 ]] && mapfile -t OPTIONS < <(printf '%s\n' "${OPTIONS[@]}" | sort -u) || OPTIONS=()
   REPO_PATH="${REPO_PATH:-$( gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null )}"
+
+  # issue mode: list issues via fzf and print selection
+  if [[ -n "${ISSUE_MODE}" ]]; then
+    local -a issue_opts=( --state "${ISSUE_MODE}" )
+    for opt in "${GHD_OPTS[@]}"; do issue_opts+=( "${opt}" ); done
+    local selected
+    selected="$( getIssueId "${issue_opts[@]}" )" || exit 0
+    local issue_id="${selected#\#}"; issue_id="${issue_id%% *}"
+    if "${OPEN}" && [[ -n "${issue_id}" ]]; then
+      gh issue view "${issue_id}" --web
+    else
+      echo "${selected}"
+    fi
+    return 0
+  fi
 
   local LABEL=''
   [[ "${#LABELS[@]}" -gt 0 ]] && LABEL="$( joinBy ',' "${LABELS[@]}" )"
