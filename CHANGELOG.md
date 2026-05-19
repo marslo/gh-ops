@@ -1,3 +1,24 @@
+## [1.0.5](https://github.com/marslo/gh-ops/compare/v1.0.4...v1.0.5) (2026-05-19)
+
+### chore
+
+* chore: enable `--issue <STATE>` in gh ops
+  - `--issue` == `--issue open` : list all open issues
+  - `--issue closed` : list all closed issues
+  - update the submodule `etc` to v1.1.0, which includes the above change
+
+* chore: submodule update
+  see: marslo/gh-utility@e0aec1d
+
+
+### ci
+
+* ci: disable precommit automatic upgrade via PR
+
+### docs
+
+* docs: update help screenshot
+
 ## [1.0.4](https://github.com/marslo/gh-ops/compare/v1.0.3...v1.0.4) (2026-05-07)
 
 ### Others
