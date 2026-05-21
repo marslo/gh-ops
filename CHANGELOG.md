@@ -1,3 +1,19 @@
+## [1.0.6](https://github.com/marslo/gh-ops/compare/v1.0.5...v1.0.6) (2026-05-21)
+
+### chore
+
+* chore: bump submodule new version - percentage-based dynamic preview window re-sizing in fzf
+* chore: bump submoudle new version
+
+### ci
+
+* ci: fix the 'Node.js 20 actions are deprecated' issue in pre-commit workflow
+* ci(workflow): using pre-commit workflow instead of pre-commit application - to disable PR auto creation
+
+### docs
+
+* docs: add icons/badge in readme
+
 ## [1.0.5](https://github.com/marslo/gh-ops/compare/v1.0.4...v1.0.5) (2026-05-19)
 
 ### chore
