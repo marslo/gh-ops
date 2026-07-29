@@ -197,13 +197,13 @@ function getLabel() {
     --add-label    ) local allLabels
                      allLabels="$( gh label list --json name --jq '.[].name' )"
                      comm -23 <( sort <<< "${allLabels}" ) <( sort <<< "${_labels}" ) \
-                       | fzf --ansi --prompt='󰩀 add > ' -0 -m | paste -sd "," - ;;
+                       | fzf --ansi --prompt='add > ' -0 -m | paste -sd "," - ;;
     --remove-label ) if [[ -z "${_labels:-}" ]]; then
                        show error "no labels on PR #${PR_ID}"
                        return 1
                      fi
                      sort <<< "${_labels}" \
-                       | fzf --ansi --prompt='󰩀 remove > ' -0 -m | paste -sd "," - ;;
+                       | fzf --ansi --prompt='remove > ' -0 -m | paste -sd "," - ;;
   esac
 }
 
